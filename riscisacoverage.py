@@ -30,15 +30,11 @@ def _create_histogram(ins):
     return ret
             
 def _create_rv32i_table(ins):    
-    rv32i_ins = ['LUI','AUIPC','JAL','JALR','BEQ','BNE','BLT','BGE','BLTU', 
-                 'BGEU','LB','LH','LW','LBU','LHU','SB','SH','SW','ADDI',
-                 'SLTI','SLTIU','XORI','ORI','ANDI','SLLI','SRLI','SRAI',
-                 'ADD','SUB','SLL','SLT','SLTU','XOR','SRL','SRA','OR','AND',
-                 'FENCE', 'FENCE.I','ECALL','EBREAK','CSRRW','CSRRS','CSRRC',
-                 'CSRRWI','CSRRSI','CSRRCI']  
+    rv32i_ins = riscv_ins.rv32i_instructions  
     
     ins_hist = _create_histogram(ins)
     ins_set = set(ins)
+    ins_set = set([x for x in ins_set if x in rv32i_ins])
     
     ret = '<table border="1">'
     ret += '<head><tr><td>Instruction</td><td>Used</td><td>Count</td></tr></head>'
@@ -55,6 +51,28 @@ def _create_rv32i_table(ins):
     ret += 'Implemented instructions: {} ({:0.2f}\%)</p>'.format(len(ins_set), len(ins_set)*100/len(rv32i_ins))
     return ret
 
+def _create_rv32m_table(ins):    
+    rv32i_ins = riscv_ins.rv32m_instructions
+    
+    ins_hist = _create_histogram(ins)
+    ins_set = set(ins)
+    ins_set = set([x for x in ins_set if x in rv32i_ins])
+
+    
+    ret = '<table border="1">'
+    ret += '<head><tr><td>Instruction</td><td>Used</td><td>Count</td></tr></head>'
+
+    for test in rv32i_ins:
+        if test in ins_set:
+            ret += '<tr><td>{}</td><td>{}</td><td>{}</td></tr>'.format(test, 'Yes', ins_hist[test])
+        else:
+            ret += '<tr><td>{}</td><td></td><td></td></tr>'.format(test)
+            
+    ret += '</table>'
+    
+    ret += '<p>RV32M ISA instructions: {}<br/>'.format(len(rv32i_ins))
+    ret += 'Implemented instructions: {} ({:0.2f}\%)</p>'.format(len(ins_set), len(ins_set)*100/len(rv32i_ins))
+    return ret
 
 def _create_registers_table(regs):
     cpu_regs = ['r0','r1','r2','r3','r4','r5','r6','r7',
@@ -114,14 +132,19 @@ def create_html_report(elffilename, htmlfile):
     fo.write('<tr><td>Code Length:</td><td>{}</td>'.format(code_len))
     fo.write('</table>')
 
+    fo.write('<table><tr><td valign="top">')
     fo.write('<h2>RV32I</h2>')
     fo.write(_create_rv32i_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV32M</h2>')
+    fo.write(_create_rv32m_table(ins))
+    fo.write('</td></tr></table>')
 
     fo.write('<h2>Instructions</h2>')
-    fo.write('<pre>')
+    fo.write('<p>')
     for x in ins_set:
-        fo.write('{}\n'.format( x))
-    fo.write('</pre>')
+        fo.write('{} '.format( x))
+    fo.write('</p>')
     
     fo.write('<h2>Registers</h2>')
     fo.write(_create_registers_table(regs))
