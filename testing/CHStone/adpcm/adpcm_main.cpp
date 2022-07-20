@@ -866,7 +866,9 @@ int main ()
       adpcm_main ();
       for (i = 0; i < IN_END / 2; i++)
 	{
+#ifdef DEBUG
 	  printf ("Expected compressed data is %d.   *** ***   Test compressed data is %d.\n", compressed[i], test_compressed[i]);
+#endif
 	  if (compressed[i] != test_compressed[i])
 	    {
 	      main_result += 1;
@@ -874,12 +876,16 @@ int main ()
 	}
       for (i = 0; i < IN_END; i++)
 	{
+#ifdef DEBUG
 	  printf ("Expected result data is %d.   @@@ @@@   Test result data is %d.\n", result[i], test_result[i]);
+#endif
 	  if (result[i] != test_result[i])
 	    {
 	      main_result += 1;
 	    }
 	}
+#ifdef DEBUG
       printf ("%d\n", main_result);
+#endif
       return main_result;
     }
