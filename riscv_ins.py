@@ -5,6 +5,15 @@ Created on Tue Jul 19 10:28:14 2022
 @author: dcr
 """
 
+rv32i_instructions = ['LUI','AUIPC','JAL','JALR','BEQ','BNE','BLT','BGE','BLTU', 
+                      'BGEU','LB','LH','LW','LBU','LHU','SB','SH','SW','ADDI',
+                      'SLTI','SLTIU','XORI','ORI','ANDI','SLLI','SRLI','SRAI',
+                      'ADD','SUB','SLL','SLT','SLTU','XOR','SRL','SRA','OR','AND',
+                      'FENCE', 'FENCE.I','ECALL','EBREAK','CSRRW','CSRRS','CSRRC',
+                      'CSRRWI','CSRRSI','CSRRCI']
+
+rv32m_instructions = ['MUL','MULH','MULHSU','MULHU','DIV','DIVU','REM','REMU']  
+    
 def ins_to_str(ins):
     opcode = ins & 0x7F
     func3 = (ins >> 12) & 0x7
@@ -57,6 +66,8 @@ def ins_to_str(ins):
         if (func3 == 0x00):
             if (func7 == 0x00):
                 return 'ADD'
+            if (func7 == 0x01):
+                return 'MUL'
             if (func7 == 0x20):
                 return 'SUB'
         if (func3 == 0x01):
@@ -64,14 +75,28 @@ def ins_to_str(ins):
                 return 'SLL'
             if (func7 == 0x01):
                 return 'MULH'
+        if (func3 == 0x02):
+            if (func7 == 0x00):
+                return 'SLT'
+            if (func7 == 0x01):
+                return 'MULHSU'
         if (func3 == 0x03):
             if (func7 == 0x00):
                 return 'SLTU'
+            if (func7 == 0x01):
+                return 'MULHU'
         if (func3 == 0x04):
             if (func7 == 0x00):
                 return 'XOR'
             if (func7 == 0x01):
                 return 'DIV'
+        if (func3 == 0x05):
+            if (func7 == 0x00):
+                return 'SRL'
+            if (func7 == 0x01):
+                return 'DIVU'
+            if (func7 == 0x20):
+                return 'SRA'
         if (func3 == 0x06):
             if (func7 == 0x00):
                 return 'OR'
