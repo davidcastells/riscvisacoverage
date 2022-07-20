@@ -1,5 +1,10 @@
 # riscvisacoverage
-Extract the RISC-V ISA instructions used by an application
+Extract the RISC-V ISA instructions used by an application.
+
+By now it supports the following ISA instructions:
+RV32I, RV32M
+
+More coming soon!
 
 check the examples 
 
