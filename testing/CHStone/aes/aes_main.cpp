@@ -131,6 +131,8 @@ int main ()
 {
       main_result = 0;
       aes_main ();
+#ifdef DEBUG
       printf ("\n%d\n", main_result);
+#endif
       return main_result;
     }
