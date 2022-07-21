@@ -153,3 +153,89 @@ def create_html_report(elffilename, htmlfile):
     fo.write(sectab)
     fo.write('</body>')
     fo.write('</html>')
+    
+def create_verilog(elffilename, verilogfile):
+    
+    print('ELFFile:', elffilename)
+    with open(elffilename, 'rb') as fi:
+        elffile = ELFFile(fi)
+        
+        text_section = elffile.get_section_by_name(".text")
+        code = text_section.data()
+        code_len = len(code)
+        
+    #print('Diassembly')
+    
+    ins = riscv_ins.get_ins(code)
+    ins_set = set(ins)
+    regs = riscv_ins.get_regs(code)
+        
+    fo = open(verilogfile, 'w')
+    
+    fo.write('// RISC-V ISA Coverage for file {}\n'.format(elffilename))
+    fo.write('// This report is automatically created by riscisacoverage tool\n')
+    fo.write('// Check https://github.com/davidcastells/riscvisacoverage\n')
+
+    fo.write('// Instructions\n')
+    for x in ins_set:
+        fo.write('`define HAS_RISCV_INS_{} \n'.format(x))
+
+    fo.write('// Registers\n')
+    for x in regs:
+        fo.write('`define HAS_RISCV_REG_{} \n'.format(x))
+    
+    fo.close()
+    
+def help():
+    print('isariscvoerage [options]')
+    print('')
+    
+    print('-i,--input <file>\tInput elf file')
+    print('-w,--html <file>\tOutput html report file')
+    print('-v,--verilog <file>\tOutput Verilog definition file')
+    print('-h,--help\t\tshows this message')
+    
+if __name__ == "__main__":
+    import sys
+    
+    if ('-h' in sys.argv)  or ('--help' in sys.argv) or (len(sys.argv) == 1):
+        help()
+        quit()
+    
+    input_file = None
+    output_html = None
+    output_verilog = None
+    
+    #print(sys.argv)
+    i = 1
+    max = len(sys.argv)
+    while (i<max):
+        arg = sys.argv[i]
+        
+        if ((i+1) < len(sys.argv)):
+            next_arg = sys.argv[i+1]
+        else:
+            next_arg = None    
+        
+        if (arg == '-i') or (arg == '--input'):
+            i += 1
+            input_file = next_arg
+        if (arg == '-w') or (arg == '--html'):
+            i += 1
+            output_html = next_arg
+        if (arg == '-v') or (arg == '--verilog'):
+            i += 1
+            output_verilog = next_arg
+            
+        i += 1
+    
+        
+    if (input_file is None):
+        print('Error! No input file provided!')
+        quit(-1)
+        
+    if not(output_html is None):
+        create_html_report(input_file, output_html)
+        
+    if not(output_verilog is None):
+        create_verilog(input_file, output_verilog)
