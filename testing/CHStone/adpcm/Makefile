@@ -6,3 +6,6 @@ adpcm.riscv32.elf: adpcm_main.cpp
 
 adpcm.x86.elf: adpcm_main.cpp
 	g++ adpcm_main.cpp -O3 -flto -o adpcm.x86.elf
+
+clean:
+	rm -fr *.elf
