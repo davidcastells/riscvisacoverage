@@ -12,6 +12,8 @@ rv32i_instructions = ['LUI','AUIPC','JAL','JALR','BEQ','BNE','BLT','BGE','BLTU',
                       'FENCE', 'FENCE.I','ECALL','EBREAK','CSRRW','CSRRS','CSRRC',
                       'CSRRWI','CSRRSI','CSRRCI']
 
+rv64i_instructions = ['LWU','LD','SD','ADDIW','SLLIW','SRLIW','SRAIW','ADDW','SUBW','SLLW','SRLW','SRAW']
+
 rv32m_instructions = ['MUL','MULH','MULHSU','MULHU','DIV','DIVU','REM','REMU']  
     
 def ins_to_str(ins):
@@ -26,10 +28,14 @@ def ins_to_str(ins):
             return 'LH'
         if (func3 == 0x02):
             return 'LW'
+        if (func3 == 0x03):
+            return 'LD'
         if (func3 == 0x04):
             return 'LBU'
         if (func3 == 0x05):
             return 'LHU'
+        if (func3 == 0x06):
+            return 'LWU'
     if (opcode == 0x13):
         if (func3 == 0x00):
             return 'ADDI'
@@ -53,6 +59,17 @@ def ins_to_str(ins):
             return 'ANDI'
     if (opcode == 0x17):
         return 'AUIPC'
+    if (opcode == 0x1b):
+        if (func3 == 0x00):
+            return 'ADDIW'
+        if (func3 == 0x01):
+            if (func7 == 0x00):
+                return 'SLLIW'
+        if (func3 == 0x05):
+            if (func7 == 0x00):
+                return 'SRLIW'
+            if (func7 == 0x20):
+                return 'SRAIW'
     if (opcode == 0x23):
         if (func3 == 0x00):
             return 'SB'
@@ -110,6 +127,21 @@ def ins_to_str(ins):
             
     if (opcode == 0x37):
         return 'LUI'
+    if (opcode == 0x3b):
+        if (func3 == 0x00):
+            if (func7 == 0x00):
+                return 'ADDW'
+            if (func7 == 0x20):
+                return 'SUBW'
+        if (func3 == 0x01):
+            if (func7 == 0x00):
+                return 'SLLW'
+        if (func3 == 0x05):
+            if (func7 == 0x00):
+                return 'SRLW'
+            if (func7 == 0x20):
+                return 'SRAW'
+            
     if (opcode == 0x63):
         if (func3 == 0x00):
             return 'BEQ'
