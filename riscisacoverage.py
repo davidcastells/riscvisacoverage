@@ -28,18 +28,17 @@ def _create_histogram(ins):
         ret[x] = v
         
     return ret
-            
-def _create_rv32i_table(ins):    
-    rv32i_ins = riscv_ins.rv32i_instructions  
-    
+
+
+def _create_ins_table(rv_ins, rv_ins_name, ins):    
     ins_hist = _create_histogram(ins)
     ins_set = set(ins)
-    ins_set = set([x for x in ins_set if x in rv32i_ins])
+    ins_set = set([x for x in ins_set if x in rv_ins])
     
     ret = '<table border="1">'
     ret += '<head><tr><td>Instruction</td><td>Used</td><td>Count</td></tr></head>'
 
-    for test in rv32i_ins:
+    for test in rv_ins:
         if test in ins_set:
             ret += '<tr><td>{}</td><td>{}</td><td>{}</td></tr>'.format(test, 'Yes', ins_hist[test])
         else:
@@ -47,22 +46,50 @@ def _create_rv32i_table(ins):
             
     ret += '</table>'
     
-    ret += '<p>RV32I ISA instructions: {}<br/>'.format(len(rv32i_ins))
-    ret += 'Implemented instructions: {} ({:0.2f}\%)</p>'.format(len(ins_set), len(ins_set)*100/len(rv32i_ins))
+    ret += '<p>{} ISA instructions: {}<br/>'.format(rv_ins_name, len(rv_ins))
+    ret += 'Implemented instructions: {} ({:0.2f}\%)</p>'.format(len(ins_set), len(ins_set)*100/len(rv_ins))
     return ret
 
+            
+def _create_rv32i_table(ins):    
+    return _create_ins_table(riscv_ins.rv32i_instructions, 'RV32I', ins)
+
 def _create_rv32m_table(ins):    
-    rv32i_ins = riscv_ins.rv32m_instructions
+    return _create_ins_table(riscv_ins.rv32m_instructions, 'RV32M', ins)
+
+def _create_rv32f_table(ins):    
+    return _create_ins_table(riscv_ins.rv32f_instructions, 'RV32F', ins)
+
+def _create_rv32d_table(ins):    
+    return _create_ins_table(riscv_ins.rv32d_instructions, 'RV32D', ins)
+
+def _create_rv32a_table(ins):    
+    return _create_ins_table(riscv_ins.rv32a_instructions, 'RV32A', ins)
+
+def _create_rv64i_table(ins):    
+    return _create_ins_table(riscv_ins.rv64i_instructions, 'RV64I', ins)
+
+def _create_rv64m_table(ins):    
+    return _create_ins_table(riscv_ins.rv64m_instructions, 'RV64M', ins)
+
+def _create_rv64f_table(ins):    
+    return _create_ins_table(riscv_ins.rv64f_instructions, 'RV64F', ins)
+
+def _create_rv64a_table(ins):    
+    return _create_ins_table(riscv_ins.rv64a_instructions, 'RV64A', ins)
+
+def _create_rvc_table(ins):    
+    rvc_ins = riscv_ins.rvc_instructions
     
     ins_hist = _create_histogram(ins)
     ins_set = set(ins)
-    ins_set = set([x for x in ins_set if x in rv32i_ins])
+    ins_set = set([x for x in ins_set if x in rvc_ins])
 
     
     ret = '<table border="1">'
     ret += '<head><tr><td>Instruction</td><td>Used</td><td>Count</td></tr></head>'
 
-    for test in rv32i_ins:
+    for test in rvc_ins:
         if test in ins_set:
             ret += '<tr><td>{}</td><td>{}</td><td>{}</td></tr>'.format(test, 'Yes', ins_hist[test])
         else:
@@ -70,8 +97,8 @@ def _create_rv32m_table(ins):
             
     ret += '</table>'
     
-    ret += '<p>RV32M ISA instructions: {}<br/>'.format(len(rv32i_ins))
-    ret += 'Implemented instructions: {} ({:0.2f}\%)</p>'.format(len(ins_set), len(ins_set)*100/len(rv32i_ins))
+    ret += '<p>RV6C ISA instructions: {}<br/>'.format(len(rvc_ins))
+    ret += 'Implemented instructions: {} ({:0.2f}\%)</p>'.format(len(ins_set), len(ins_set)*100/len(rvc_ins))
     return ret
 
 def _create_registers_table(regs):
@@ -113,11 +140,13 @@ def create_html_report(elffilename, htmlfile):
         code = text_section.data()
         code_len = len(code)
         
-    print('Diassembly')
+    print('Getting instructions')
     
-    ins = riscv_ins.get_ins(code)
+    ins = riscv_ins.get_ins(code, elffile.elfclass)
     ins_set = set(ins)
-    regs = riscv_ins.get_regs(code)
+    
+    print('Getting register usage')
+    regs = riscv_ins.get_regs(code, elffile.elfclass)
         
     fo = open(htmlfile, 'w')
     
@@ -134,11 +163,50 @@ def create_html_report(elffilename, htmlfile):
 
     fo.write('<table><tr><td valign="top">')
     fo.write('<h2>RV32I</h2>')
+    print('Analyzing RV32I instructions')    
     fo.write(_create_rv32i_table(ins))
     fo.write('</td><td valign="top">')
     fo.write('<h2>RV32M</h2>')
+    print('Analyzing RV32M instructions')    
     fo.write(_create_rv32m_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV32F</h2>')
+    print('Analyzing RV32F instructions')    
+    fo.write(_create_rv32f_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV32D</h2>')
+    print('Analyzing RV32D instructions')    
+    fo.write(_create_rv32d_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV32A</h2>')
+    print('Analyzing RV32A instructions')    
+    fo.write(_create_rv32a_table(ins))
     fo.write('</td></tr></table>')
+
+    fo.write('<table><tr><td valign="top">')
+    fo.write('<h2>RV64I</h2>')
+    print('Analyzing RV64I instructions')    
+    fo.write(_create_rv64i_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV64M</h2>')
+    print('Analyzing RV64I instructions')    
+    fo.write(_create_rv64m_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV64F</h2>')
+    print('Analyzing RV64F instructions')    
+    fo.write(_create_rv64f_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV64A</h2>')
+    print('Analyzing RV64A instructions')    
+    fo.write(_create_rv64a_table(ins))
+    fo.write('</td></tr></table>')
+
+    fo.write('<table><tr><td valign="top">')
+    fo.write('<h2>RVC</h2>')
+    print('Analyzing RVC instructions')    
+    fo.write(_create_rvc_table(ins))
+    fo.write('</td></tr></table>')
+
 
     fo.write('<h2>Instructions</h2>')
     fo.write('<p>')
