@@ -627,8 +627,8 @@ def get_ins(code, isa):
 
         except:
             print('{:08X} - unable to decode instruction {:08X} - {:08b} {:08b} {:08b} {:08b}'.format(off, ins, (ins>>24)&0xFF, (ins>>16)&0xFF, (ins>>8)&0xFF, ins&0xFF))
-            import sys
-            sys.exit()
+            #import sys
+            #sys.exit()
                 
 
     return ret
@@ -640,30 +640,33 @@ def get_regs(code, isa):
     ret = set([])
     
     while (off <= (size-4)):
-        cins = int.from_bytes(code[off:off+2], byteorder='little')
-        
-        if (_isCompactIns(cins)):
-            ins = cins
-            #print('{:08X} - {:08X}'.format(off, ins))
-            off += 2
-
-        else:
-            ins = int.from_bytes(code[off:off+4], byteorder='little')
-            #print('{:08X} - {:08X}'.format(off, ins))
-            off += 4
+        try:
+            cins = int.from_bytes(code[off:off+2], byteorder='little')
+            
+            if (_isCompactIns(cins)):
+                ins = cins
+                #print('{:08X} - {:08X}'.format(off, ins))
+                off += 2
     
-        regs = ins_to_regs(ins, isa)
-
+            else:
+                ins = int.from_bytes(code[off:off+4], byteorder='little')
+                #print('{:08X} - {:08X}'.format(off, ins))
+                off += 4
+        
+            regs = ins_to_regs(ins, isa)
+    
         
         #print('reg {:x}'.format(off))
         
-        if not(regs is None):
-            for r in regs:
-                ret.add(r)
+            if not(regs is None):
+                for r in regs:
+                    ret.add(r)
 
         
         
         #print('Regs so far', ret)
+        except:
+            print('{:08X} - unable to decode instruction {:08X} - {:08b} {:08b} {:08b} {:08b}'.format(off, ins, (ins>>24)&0xFF, (ins>>16)&0xFF, (ins>>8)&0xFF, ins&0xFF))
 
 
     return ret
