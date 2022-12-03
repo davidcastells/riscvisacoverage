@@ -122,7 +122,15 @@ def _create_registers_table(regs):
     ret += 'Used Registers: {} ({:0.2f}\%)</p>'.format(len(regs), len(regs)*100/len(cpu_regs))
     return ret
 
-def create_html_report(elffilename, htmlfile):
+def create_html_report(file, htmlfile, filetype='elf', elfclass=32):
+    if (filetype == 'elf'):
+        create_html_report_from_elf(file, htmlfile)
+    elif (filetype == 'bin'):
+        create_html_report_from_bin(file, htmlfile, elfclass)
+    else:
+        raise Exception('Unsupported file type')
+
+def create_html_report_from_elf(elffilename, htmlfile):
     
     print('ELFFile:', elffilename)
     with open(elffilename, 'rb') as fi:
@@ -219,6 +227,93 @@ def create_html_report(elffilename, htmlfile):
 
     fo.write('<h2>ELF Section Information</h2>')
     fo.write(sectab)
+    fo.write('</body>')
+    fo.write('</html>')
+    
+def create_html_report_from_bin(binfile, htmlfile, elfclass):
+    
+    with open(binfile, 'rb') as fi:
+        
+        code = fi.read()
+        code_len = len(code)
+        
+    print('Getting instructions')
+    
+    ins = riscv_ins.get_ins(code, elfclass)
+    ins_set = set(ins)
+    
+    print('Getting register usage')
+    regs = riscv_ins.get_regs(code, elfclass)
+        
+    fo = open(htmlfile, 'w')
+    
+    fo.write('<html>')
+    fo.write('<body>')
+    fo.write('<h1>RISC-V ISA Coverage Report for file {} </h1>'.format(binfile))
+    fo.write('<p><small>This report is automatically created by <b>riscisacoverage</b> tool. Check <a href="https://github.com/davidcastells/riscvisacoverage">https://github.com/davidcastells/riscvisacoverage</a> </small></p><br>')
+    fo.write('<table>')
+    fo.write('<tr><td>File Path:</td><td>{}</td>'.format(binfile))
+    fo.write('<tr><td>Report date:</td><td>{}</td>'.format(datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+    fo.write('<tr><td>Elf class:</td><td>{}</td>'.format(elfclass))
+    fo.write('<tr><td>Code Length:</td><td>{}</td>'.format(code_len))
+    fo.write('</table>')
+
+    fo.write('<table><tr><td valign="top">')
+    fo.write('<h2>RV32I</h2>')
+    print('Analyzing RV32I instructions')    
+    fo.write(_create_rv32i_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV32M</h2>')
+    print('Analyzing RV32M instructions')    
+    fo.write(_create_rv32m_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV32F</h2>')
+    print('Analyzing RV32F instructions')    
+    fo.write(_create_rv32f_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV32D</h2>')
+    print('Analyzing RV32D instructions')    
+    fo.write(_create_rv32d_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV32A</h2>')
+    print('Analyzing RV32A instructions')    
+    fo.write(_create_rv32a_table(ins))
+    fo.write('</td></tr></table>')
+
+    fo.write('<table><tr><td valign="top">')
+    fo.write('<h2>RV64I</h2>')
+    print('Analyzing RV64I instructions')    
+    fo.write(_create_rv64i_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV64M</h2>')
+    print('Analyzing RV64I instructions')    
+    fo.write(_create_rv64m_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV64F</h2>')
+    print('Analyzing RV64F instructions')    
+    fo.write(_create_rv64f_table(ins))
+    fo.write('</td><td valign="top">')
+    fo.write('<h2>RV64A</h2>')
+    print('Analyzing RV64A instructions')    
+    fo.write(_create_rv64a_table(ins))
+    fo.write('</td></tr></table>')
+
+    fo.write('<table><tr><td valign="top">')
+    fo.write('<h2>RVC</h2>')
+    print('Analyzing RVC instructions')    
+    fo.write(_create_rvc_table(ins))
+    fo.write('</td></tr></table>')
+
+
+    fo.write('<h2>Instructions</h2>')
+    fo.write('<p>')
+    for x in ins_set:
+        fo.write('{} '.format( x))
+    fo.write('</p>')
+    
+    fo.write('<h2>Registers</h2>')
+    fo.write(_create_registers_table(regs))
+
     fo.write('</body>')
     fo.write('</html>')
     
