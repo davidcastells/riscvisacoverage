@@ -1,0 +1,80 @@
+<h1>LUI</h1>
+
+<p>Instruction set: RV32I </p>
+
+<p>Format: U-Type </p>
+
+<p>Layout:
+  <table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+	<tbody>
+		<tr>
+			<td>31</td>
+			<td>30</td>
+			<td>29</td>
+			<td>28</td>
+			<td>27</td>
+			<td>26</td>
+			<td>25</td>
+			<td>24</td>
+			<td>23</td>
+			<td>22</td>
+			<td>21</td>
+			<td>20</td>
+			<td>19</td>
+			<td>18</td>
+			<td>17</td>
+			<td>16</td>
+			<td>15</td>
+			<td>14</td>
+			<td>13</td>
+			<td>12</td>
+			<td>11</td>
+			<td>10</td>
+			<td>9</td>
+			<td>8</td>
+			<td>7</td>
+			<td>6</td>
+			<td>5</td>
+			<td>4</td>
+			<td>3</td>
+			<td>2</td>
+			<td>1</td>
+			<td>0</td>
+		</tr>
+		<tr>
+			<td colspan="20" rowspan="1">imm</td>
+			<td colspan="5" rowspan="1">rd</td>
+      <td colspan="7" rowspan="1">op</td>
+    </tr>
+    <tr>
+    <td colspan="20" rowspan="1"></td>
+			<td colspan="5" rowspan="1"></td>
+			<td>0</td>
+			<td>1</td>
+			<td>1</td>
+			<td>0</td>
+			<td>1</td>
+			<td>1</td>
+			<td>1</td>
+		</tr>
+		<tr>
+			<td colspan="20" rowspan="1">20 bits</td>
+			<td colspan="5" rowspan="1">5 bits</td>
+			<td colspan="7" rowspan="1">7 bits</td>
+		</tr>
+	</tbody>
+</table>
+
+</p>
+<p> Behaviour: 
+
+  LUI (load upper immediate) is used to build 32-bit constants and uses the U-type format. LUI
+places the U-immediate value in the top 20 bits of the destination register rd, filling in the lowest
+12 bits with zeros
+<p>
+  
+  <p> Pseudo-Code: 
+ <pre>
+REG[rd] = imm << 12
+ </pre>
+</p>
