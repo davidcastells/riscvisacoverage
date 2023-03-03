@@ -1,0 +1,99 @@
+<h1>CSRRSI</h1>
+
+<p>Instruction set: RV32I </p>
+
+<p>Format: I-Type </p>
+
+<p>Layout:
+  <table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+	<tbody>
+		<tr>
+			<td>31</td>
+			<td>30</td>
+			<td>29</td>
+			<td>28</td>
+			<td>27</td>
+			<td>26</td>
+			<td>25</td>
+			<td>24</td>
+			<td>23</td>
+			<td>22</td>
+			<td>21</td>
+			<td>20</td>
+			<td>19</td>
+			<td>18</td>
+			<td>17</td>
+			<td>16</td>
+			<td>15</td>
+			<td>14</td>
+			<td>13</td>
+			<td>12</td>
+			<td>11</td>
+			<td>10</td>
+			<td>9</td>
+			<td>8</td>
+			<td>7</td>
+			<td>6</td>
+			<td>5</td>
+			<td>4</td>
+			<td>3</td>
+			<td>2</td>
+			<td>1</td>
+			<td>0</td>
+		</tr>
+		<tr>
+			<td colspan="12" rowspan="1">csr</td>
+			<td colspan="5" rowspan="1">zimm</td>
+      <td colspan="3" rowspan="1">funct3</td>
+      <td colspan="5" rowspan="1">rd</td>
+      <td colspan="7" rowspan="1">op</td>
+    </tr>
+    <tr>
+    <td colspan="12" rowspan="1"></td>
+			<td colspan="5" rowspan="1"></td>
+			<td>1</td>
+			<td>1</td>
+			<td>0</td>
+			<td colspan="5" rowspan="1"></td>
+      <td>1</td>
+			<td>1</td>
+			<td>1</td>
+      <td>0</td>
+			<td>0</td>
+			<td>1</td>
+      <td>1</td>
+		</tr>
+		<tr>
+			<td colspan="12" rowspan="1">12 bits</td>
+			<td colspan="5" rowspan="1">5 bits</td>
+      <td colspan="3" rowspan="1">3 bits</td>
+      <td colspan="5" rowspan="1">5 bits</td>
+      <td colspan="7" rowspan="1">7 bits</td>
+		</tr>
+	</tbody>
+</table>
+
+</p>
+<p> Behaviour: 
+
+The CSRRSI (Atomic Read and Set Bits Immediate in CSR) instruction reads the value of the CSR, zeroextends the value to XLEN bits, and writes it to integer register rd. The initial value in integer
+
+ The XLEN-bit value obtained by zero-extending a 5-bit unsigned immediate (uimm[4:0]) field encoded in the rs1 field is treated as a bit mask that specifies
+  bit positions to be set in the CSR. 
+  Any bit that
+is high in the mask will cause the corresponding bit to be set in the CSR, if that CSR bit is writable.
+Other bits in the CSR are unaffected (though CSRs might have side effects when written).
+  
+If the uimm[4:0] field is zero, then these instructions will not
+write to the CSR, and shall not cause any of the side effects that might otherwise occur on a CSR
+write. 
+  
+<p>
+  
+  <p> Pseudo-Code: 
+ <pre>
+
+CSR[csr] = CSR[csr] |  rs1
+
+ </pre>
+</p>
