@@ -1,0 +1,66 @@
+<h1>LUI</h1>
+
+<p>Instruction set: RVC </p>
+
+<p>Format: CIW-Type </p>
+
+<p>Layout:
+  <table border="1" cellpadding="1" cellspacing="1" style="width:500px">
+	<tbody>
+		<tr>
+			<td>15</td>
+			<td>14</td>
+			<td>13</td>
+			<td>12</td>
+			<td>11</td>
+			<td>10</td>
+			<td>9</td>
+			<td>8</td>
+			<td>7</td>
+			<td>6</td>
+			<td>5</td>
+			<td>4</td>
+			<td>3</td>
+			<td>2</td>
+			<td>1</td>
+			<td>0</td>
+		</tr>
+		<tr>
+			<td colspan="3" rowspan="1">funct3</td>
+			<td colspan="8" rowspan="1">imm</td>
+      <td colspan="3" rowspan="1">rd'</td>
+      <td colspan="2" rowspan="1">op'</td>
+    </tr>
+    <tr>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+    <td colspan="8" rowspan="1"></td>
+			<td colspan="3" rowspan="1"></td>
+			<td>0</td>
+			<td>0</td>
+		</tr>
+		<tr>
+			<td colspan="20" rowspan="1">20 bits</td>
+			<td colspan="5" rowspan="1">5 bits</td>
+			<td colspan="7" rowspan="1">7 bits</td>
+		</tr>
+	</tbody>
+</table>
+
+</p>
+<p> Behaviour: 
+
+C.ADDI4SPN is a CIW-format RV32C/RV64C-only instruction that adds a zero-extended non-zero
+immediate, scaled by 4, to the stack pointer, x2, and writes the result to rd0. This instruction is used
+to generate pointers to stack-allocated variables, and expands to addi rd0, x2, nzuimm[9:2].
+
+<p>
+  
+  <p> Pseudo-Code: 
+ <pre>
+imm8 = compose(ins, [[7,4],[11,2],[5,1],[6,1]]) << 2
+
+REG[rd'] = REG[2] + imm8
+</pre>
+</p>
