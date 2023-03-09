@@ -43,7 +43,7 @@
 		</tr>
 		<tr>
 			<td colspan="12" rowspan="1">csr</td>
-			<td colspan="5" rowspan="1">zimm</td>
+			<td colspan="5" rowspan="1">uimm</td>
       <td colspan="3" rowspan="1">funct3</td>
       <td colspan="5" rowspan="1">rd</td>
       <td colspan="7" rowspan="1">op</td>
@@ -80,8 +80,7 @@ The CSRRSI (Atomic Read and Set Bits Immediate in CSR) instruction reads the val
 
  The XLEN-bit value obtained by zero-extending a 5-bit unsigned immediate (uimm[4:0]) field encoded in the rs1 field is treated as a bit mask that specifies
   bit positions to be set in the CSR. 
-  Any bit that
-is high in the mask will cause the corresponding bit to be set in the CSR, if that CSR bit is writable.
+  Any bit that is high in the mask will cause the corresponding bit to be set in the CSR, if that CSR bit is writable.
 Other bits in the CSR are unaffected (though CSRs might have side effects when written).
   
 If the uimm[4:0] field is zero, then these instructions will not
@@ -93,7 +92,8 @@ write.
   <p> Pseudo-Code: 
  <pre>
 
-CSR[csr] = CSR[csr] |  rs1
+if (uimm != 0):
+    CSR[csr] = CSR[csr] |  uimm
 
  </pre>
 </p>
